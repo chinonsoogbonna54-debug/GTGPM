@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <h2>Test Photo Post Upload</h2>
+  <form id="postForm">
+    <input type="text" id="token" placeholder="Paste your JWT token here" style="width: 400px"><br><br>
+    <input type="text" id="title" placeholder="Post title" value="Youth Conference Highlights"><br><br>
+    <input type="file" id="photos" multiple accept="image/*"><br><br>
+    <button type="submit">Create Photo Post</button>
+  </form>
+  <pre id="result"></pre>
+
+  <script>
+    document.getElementById('postForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const token = document.getElementById('token').value;
+      const title = document.getElementById('title').value;
+      const files = document.getElementById('photos').files;
+
+      const formData = new FormData();
+      formData.append('type', 'photo');
+      formData.append('title', title);
+      for (let i = 0; i < files.length; i++) {
+        formData.append('photos', files[i]);
+      }
+
+      const response = await fetch('http://127.0.0.1:8000/admin/posts', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token },
+        body: formData
+      });
+      const data = await response.json();
+      document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+    });
+  </script>
+</body>
+</html>

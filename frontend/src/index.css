@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-brand-bg text-brand-ink font-sans antialiased;
+  margin: 0;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Glass loading shimmer, used while the event carousel's images load */
+.glass-loading {
+  position: relative;
+  background-color: rgba(120, 120, 120, 0.15);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  overflow: hidden;
+}
+.glass-loading::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.35) 50%, transparent 70%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+@keyframes shimmer {
+  0% { background-position: 150% 0; }
+  100% { background-position: -50% 0; }
+}
+
+.heart-pop {
+  animation: pop 0.45s cubic-bezier(0.17, 0.89, 0.32, 1.49);
+}
+@keyframes pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+
+.story-ring {
+  background: conic-gradient(from 180deg, #B91C1C 0deg, #F97316 90deg, #D4AF37 180deg, #B91C1C 360deg);
+}
+
+.carousel-track {
+  scroll-snap-type: x mandatory;
+}
+.carousel-slide {
+  scroll-snap-align: start;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heart-pop,
+  .glass-loading::after {
+    animation: none !important;
+  }
+}
+
+.sparkle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 10px;
+  color: #D4AF37;
+  opacity: 0;
+  pointer-events: none;
+  transform-origin: center;
+}
+.sparkle-1 { animation: sparkle-fly 0.6s ease-out forwards; --tx: -14px; --ty: -14px; }
+.sparkle-2 { animation: sparkle-fly 0.6s ease-out 0.05s forwards; --tx: 14px; --ty: -12px; }
+.sparkle-3 { animation: sparkle-fly 0.6s ease-out 0.1s forwards; --tx: -12px; --ty: 12px; }
+.sparkle-4 { animation: sparkle-fly 0.6s ease-out 0.02s forwards; --tx: 14px; --ty: 12px; }
+@keyframes sparkle-fly {
+  0%   { opacity: 1; transform: translate(-50%, -50%) scale(0.4); }
+  100% { opacity: 0; transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(1); }
+}
