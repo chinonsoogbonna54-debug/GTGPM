@@ -32,6 +32,7 @@ async def get_posts(
         selectinload(Post.video_detail),
         selectinload(Post.sermon_detail),
         selectinload(Post.announcement_detail),
+        selectinload(Post.likes),
     ).where(Post.is_published == True)
 
     if cursor:

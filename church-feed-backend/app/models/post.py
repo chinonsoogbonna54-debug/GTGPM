@@ -56,6 +56,10 @@ class Post(Base):
             cascade="all, delete-orphan"
                     )
 
+    @property
+    def like_count(self):
+        return len(self.likes)
+
 
 
 

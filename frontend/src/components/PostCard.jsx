@@ -24,6 +24,7 @@ export default function PostCard({ post, isAdmin = false, onEdit, onDelete, onTa
   const [reacted, setReacted] = useState(null);
   const [busy, setBusy] = useState(false);
   const [sparkleKey, setSparkleKey] = useState(0);
+  const [lightboxIndex, setLightboxIndex] = useState(null);
   const links = shareLinks(post);
 
   async function handleReact(emoji) {
@@ -45,19 +46,31 @@ export default function PostCard({ post, isAdmin = false, onEdit, onDelete, onTa
   }
 
   let bodyContent = null;
+  const allPhotos = post.type === "photo" ? (post.photos?.slice(0, 4) || []) : [];
 
-  if (post.type === "photo" && post.photos?.length) {
-    const photos = post.photos.slice(0, 4);
+  if (post.type === "photo" && allPhotos.length) {
+    const photos = allPhotos;
 
     if (photos.length === 1) {
       bodyContent = (
-        <img src={photos[0].photo_url} alt={post.title} className="w-full aspect-square object-cover" />
+        <img
+          src={photos[0].photo_url}
+          alt={post.title}
+          onClick={() => setLightboxIndex(0)}
+          className="w-full aspect-square object-cover cursor-pointer"
+        />
       );
     } else if (photos.length === 2) {
       bodyContent = (
         <div className="grid grid-cols-2 gap-[2px]">
-          {photos.map((p) => (
-            <img key={p.position} src={p.photo_url} alt="" className="w-full aspect-square object-cover" />
+          {photos.map((p, i) => (
+            <img
+              key={p.position}
+              src={p.photo_url}
+              alt=""
+              onClick={() => setLightboxIndex(i)}
+              className="w-full aspect-square object-cover cursor-pointer"
+            />
           ))}
         </div>
       );
@@ -65,17 +78,38 @@ export default function PostCard({ post, isAdmin = false, onEdit, onDelete, onTa
       bodyContent = (
         <div className="grid grid-cols-2 gap-[2px]">
           <div className="row-span-2">
-            <img src={photos[0].photo_url} alt="" className="w-full h-full object-cover" />
+            <img
+              src={photos[0].photo_url}
+              alt=""
+              onClick={() => setLightboxIndex(0)}
+              className="w-full h-full object-cover cursor-pointer"
+            />
           </div>
-          <img src={photos[1].photo_url} alt="" className="w-full aspect-square object-cover" />
-          <img src={photos[2].photo_url} alt="" className="w-full aspect-square object-cover" />
+          <img
+            src={photos[1].photo_url}
+            alt=""
+            onClick={() => setLightboxIndex(1)}
+            className="w-full aspect-square object-cover cursor-pointer"
+          />
+          <img
+            src={photos[2].photo_url}
+            alt=""
+            onClick={() => setLightboxIndex(2)}
+            className="w-full aspect-square object-cover cursor-pointer"
+          />
         </div>
       );
     } else {
       bodyContent = (
         <div className="grid grid-cols-2 gap-[2px]">
-          {photos.map((p) => (
-            <img key={p.position} src={p.photo_url} alt="" className="w-full aspect-square object-cover" />
+          {photos.map((p, i) => (
+            <img
+              key={p.position}
+              src={p.photo_url}
+              alt=""
+              onClick={() => setLightboxIndex(i)}
+              className="w-full aspect-square object-cover cursor-pointer"
+            />
           ))}
         </div>
       );
@@ -219,10 +253,64 @@ export default function PostCard({ post, isAdmin = false, onEdit, onDelete, onTa
         </a>
       </div>
 
+       {post.like_count > 0 && (
+        <p className="px-3 pb-2 text-xs text-brand-grey">
+          {post.like_count} {post.like_count === 1 ? "reaction" : "reactions"}
+        </p>
+      )}
+
       {post.tag && (
         <button onClick={() => onTagClick?.(post.tag)} className="mx-3 mb-2 text-xs text-brand-red">
           {post.tag}
         </button>
+      )}
+
+      {lightboxIndex !== null && (
+        <div
+          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
+          onClick={() => setLightboxIndex(null)}
+        >
+          <button
+            onClick={() => setLightboxIndex(null)}
+            className="absolute top-4 right-4 text-white text-3xl leading-none"
+            aria-label="Close"
+          >
+            &times;
+          </button>
+
+          {allPhotos.length > 1 && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setLightboxIndex((i) => (i - 1 + allPhotos.length) % allPhotos.length);
+              }}
+              className="absolute left-2 sm:left-4 text-white text-4xl leading-none px-2"
+              aria-label="Previous photo"
+            >
+              &#8249;
+            </button>
+          )}
+
+          <img
+            src={allPhotos[lightboxIndex].photo_url}
+            alt=""
+            onClick={(e) => e.stopPropagation()}
+            className="max-w-[92vw] max-h-[85vh] object-contain"
+          />
+
+          {allPhotos.length > 1 && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setLightboxIndex((i) => (i + 1) % allPhotos.length);
+              }}
+              className="absolute right-2 sm:right-4 text-white text-4xl leading-none px-2"
+              aria-label="Next photo"
+            >
+              &#8250;
+            </button>
+          )}
+        </div>
       )}
     </article>
   );

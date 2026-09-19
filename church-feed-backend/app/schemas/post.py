@@ -57,13 +57,13 @@ class PostOut(BaseModel):
     title: str
     created_at: datetime
     pinned: bool
+    like_count: int = 0
 
     event_detail: Optional[EventDetailOut] = None
     photos: list[PostPhotoOut] = []
     video_detail: Optional[VideoDetailOut] = None
     sermon_detail: Optional[SermonDetailOut] = None
     announcement_detail: Optional[AnnouncementDetailOut] = None
-    
 
 
 
