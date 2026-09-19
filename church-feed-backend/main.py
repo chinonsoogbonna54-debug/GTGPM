@@ -18,7 +18,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
-        "https://gtgpm-ntibijgt5-matchday2.vercel.app",
+        "https://gtgpm.vercel.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],
